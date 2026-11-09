@@ -5,7 +5,7 @@ from app_context import AppContext
 from views._nav import build_nav_bar
 
 
-def build_map_view(ctx: AppContext) -> ft.View:
+def build_map_content(ctx: AppContext) -> ft.View:
     return ft.View(
         route="/",
         appbar=ft.AppBar(title=ft.Text("Карта")),

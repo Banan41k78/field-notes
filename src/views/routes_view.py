@@ -1,23 +1,26 @@
-"""Заглушка вкладки «Маршруты»."""
+"""Контент вкладки «Маршруты»."""
 import flet as ft
 
 from app_context import AppContext
-from views._nav import build_nav_bar
 
 
-def build_routes_view(ctx: AppContext) -> ft.View:
-    return ft.View(
-        route="/routes",
-        appbar=ft.AppBar(title=ft.Text("Маршруты")),
-        padding=0,
-        controls=[
-            ft.Column([
-                ft.Container(
-                    expand=True,
-                    alignment=ft.alignment.Alignment.CENTER,
-                    content=ft.Text("Здесь будут сохранённые маршруты", size=20),
+def build_routes_content(ctx: AppContext) -> ft.Control:
+    return ft.Container(
+        expand=True,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=12,
+            controls=[
+                ft.Icon(ft.Icons.LIST_ALT_OUTLINED, size=64, color=ft.Colors.GREY),
+                ft.Text("Здесь будут сохранённые маршруты", size=20),
+                ft.Text(
+                    "Импортируйте GPX/KML или создайте маршрут на десктопе.",
+                    size=12,
+                    color=ft.Colors.GREY,
+                    text_align=ft.TextAlign.CENTER,
                 ),
-                build_nav_bar(2, ctx.page),
-            ], expand=True, spacing=0),
-        ],
+            ],
+        ),
     )

@@ -1,23 +1,26 @@
-"""Заглушка вкладки «Треки»."""
+"""Контент вкладки «Треки»."""
 import flet as ft
 
 from app_context import AppContext
-from views._nav import build_nav_bar
 
 
-def build_tracks_view(ctx: AppContext) -> ft.View:
-    return ft.View(
-        route="/tracks",
-        appbar=ft.AppBar(title=ft.Text("Треки")),
-        padding=0,
-        controls=[
-            ft.Column([
-                ft.Container(
-                    expand=True,
-                    alignment=ft.alignment.Alignment.CENTER,
-                    content=ft.Text("Здесь будут записанные треки", size=20),
+def build_tracks_content(ctx: AppContext) -> ft.Control:
+    return ft.Container(
+        expand=True,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=12,
+            controls=[
+                ft.Icon(ft.Icons.ROUTE_OUTLINED, size=64, color=ft.Colors.GREY),
+                ft.Text("Здесь будут записанные треки", size=20),
+                ft.Text(
+                    "Пока ничего не записано.\nНачните запись на вкладке «Карта».",
+                    size=12,
+                    color=ft.Colors.GREY,
+                    text_align=ft.TextAlign.CENTER,
                 ),
-                build_nav_bar(1, ctx.page),
-            ], expand=True, spacing=0),
-        ],
+            ],
+        ),
     )

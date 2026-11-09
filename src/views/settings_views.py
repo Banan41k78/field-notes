@@ -72,14 +72,14 @@ def _text_handler(settings, prefs, path: str, cast=str):
 
 # ---------- Основной билдер ----------
 
-def build_settings_view(ctx: AppContext) -> ft.View:
+def build_settings_content(ctx: AppContext) -> ft.View:
     page = ctx.page
     settings = ctx.settings
     prefs = ctx.prefs
     ref: dict = {}
 
     def rebuild():
-        new_view = build_settings_view(ctx)
+        new_view = build_settings_content(ctx)
         idx = page.views.index(ref["view"])
         page.views[idx] = new_view
         page.update()
