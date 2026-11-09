@@ -1,0 +1,22 @@
+[project]
+name = "gps_tracker"
+version = "1.0.0"
+description = "GPS tracker"
+dependencies = [
+    "flet",
+    "flet-map",
+    "flet-geolocator",
+]
+
+[tool.flet]
+app.path = "src/main.py"
+product = "GPS Трекер"
+company = "..."
+
+[tool.flet.android.permission]
+"android.permission.ACCESS_FINE_LOCATION" = true
+"android.permission.ACCESS_COARSE_LOCATION" = true
+"android.permission.ACCESS_BACKGROUND_LOCATION" = true
+"android.permission.FOREGROUND_SERVICE" = true
+"android.permission.FOREGROUND_SERVICE_LOCATION" = true
+"android.permission.POST_NOTIFICATIONS" = true
