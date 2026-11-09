@@ -1,6 +1,8 @@
 """Экран «Настройки»."""
 import asyncio
 from datetime import datetime
+from app_context import AppContext
+from views._nav import build_nav_bar
 
 import flet as ft
 
@@ -70,15 +72,14 @@ def _text_handler(settings, prefs, path: str, cast=str):
 
 # ---------- Основной билдер ----------
 
-def build_settings_view(
-    page: ft.Page,
-    settings: AppSettings,
-    prefs: ft.SharedPreferences,
-) -> ft.View:
+def build_settings_view(ctx: AppContext) -> ft.View:
+    page = ctx.page
+    settings = ctx.settings
+    prefs = ctx.prefs
     ref: dict = {}
 
     def rebuild():
-        new_view = build_settings_view(page, settings, prefs)
+        new_view = build_settings_view(ctx)
         idx = page.views.index(ref["view"])
         page.views[idx] = new_view
         page.update()
@@ -506,27 +507,19 @@ def build_settings_view(
     )
 
     # =============== Собираем View ===============
-    view = ft.View(
-        route="/settings",
-        appbar=ft.AppBar(title=ft.Text("Настройки")),
-        padding=0,
+    return ft.Column(
+        expand=True,
         controls=[
             ft.ListView(
                 expand=True,
                 spacing=8,
                 padding=10,
                 controls=[
-                    gps_section,
-                    maps_section,
-                    sync_section,
-                    notifications_section,
-                    units_section,
-                    display_section,
-                    data_section,
-                    about_section,
+                    gps_section, maps_section, sync_section,
+                    notifications_section, units_section, display_section,
+                    data_section, about_section,
                 ],
             ),
         ],
+        spacing=0,
     )
-    ref["view"] = view
-    return view
