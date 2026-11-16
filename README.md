@@ -5,6 +5,7 @@ Written entirely in Python with [Flet](https://flet.dev) — one codebase for An
 desktop, and web.
 
 > Записывайте треки в поле без интернета → синхронизируйте с десктопом → получайте
+> 
 > подробные отчёты с метриками, профилем высот и экспортом в GPX/KML.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
