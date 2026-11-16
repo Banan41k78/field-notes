@@ -19,4 +19,5 @@ company = "..."
 "android.permission.ACCESS_BACKGROUND_LOCATION" = true
 "android.permission.FOREGROUND_SERVICE" = true
 "android.permission.FOREGROUND_SERVICE_LOCATION" = true
+
 "android.permission.POST_NOTIFICATIONS" = true
