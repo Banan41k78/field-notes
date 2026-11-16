@@ -15,6 +15,13 @@ import flet as ft
 #  ENUMS — фиксированные варианты значений
 # ============================================================
 
+class MapMode(str, Enum):
+    IDLE = "idle"
+    NAVIGATING = "navigating"
+    RECORDING = "recording"
+    NAV_REC = "navigating_recording"
+
+
 class GPSAccuracy(str, Enum):
     HIGH = "high"          # GPS, точность ±3-5 м, больше расход батареи
     BALANCED = "balanced"  # компромисс

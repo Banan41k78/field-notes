@@ -1,14 +1,17 @@
-# models/track.py
+"""Модели записанного трека."""
 from dataclasses import dataclass, field
 from datetime import datetime
-from math import radians, sin, cos, asin, sqrt
 import uuid
+
+from models.geo import haversine_m
+
 
 @dataclass
 class TrackPoint:
+    """Одна точка GPS-трека."""
     lat: float
     lon: float
-    timestamp: str  # ISO 8601
+    timestamp: str  # ISO 8601, например "2026-11-09T14:23:01"
     altitude: float | None = None
     speed_kmh: float | None = None
 
@@ -32,32 +35,31 @@ class TrackPoint:
         )
 
 
-def haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """Расстояние между двумя точками в метрах (haversine)."""
-    R = 6_371_000
-    phi1, phi2 = radians(lat1), radians(lat2)
-    dphi = radians(lat2 - lat1)
-    dlambda = radians(lon2 - lon1)
-    a = sin(dphi / 2) ** 2 + cos(phi1) * cos(phi2) * sin(dlambda / 2) ** 2
-    return 2 * R * asin(sqrt(a))
-
-
 @dataclass
 class Track:
+    """Записанный трек: набор точек + метаданные."""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     name: str = ""
-    created_at: str = field(default_factory=lambda: datetime.now().isoformat(timespec="seconds"))
+    created_at: str = field(
+        default_factory=lambda: datetime.now().isoformat(timespec="seconds")
+    )
     points: list[TrackPoint] = field(default_factory=list)
     synced: bool = False
 
+    # ---------- Вычисляемые свойства ----------
+
+    @property
+    def is_empty(self) -> bool:
+        return len(self.points) < 2
+
     @property
     def distance_m(self) -> float:
-        if len(self.points) < 2:
+        if self.is_empty:
             return 0.0
-        total = 0.0
-        for a, b in zip(self.points, self.points[1:]):
-            total += haversine_m(a.lat, a.lon, b.lat, b.lon)
-        return total
+        return sum(
+            haversine_m(a.lat, a.lon, b.lat, b.lon)
+            for a, b in zip(self.points, self.points[1:])
+        )
 
     @property
     def distance_km(self) -> float:
@@ -65,12 +67,12 @@ class Track:
 
     @property
     def duration_sec(self) -> int:
-        if len(self.points) < 2:
+        if self.is_empty:
             return 0
         try:
             start = datetime.fromisoformat(self.points[0].timestamp)
             end = datetime.fromisoformat(self.points[-1].timestamp)
-            return int((end - start).total_seconds())
+            return max(0, int((end - start).total_seconds()))
         except (ValueError, TypeError):
             return 0
 
@@ -79,7 +81,9 @@ class Track:
         dur = self.duration_sec
         if dur == 0:
             return 0.0
-        return (self.distance_m / 1000.0) / (dur / 3600.0)
+        return self.distance_km / (dur / 3600.0)
+
+    # ---------- Сериализация ----------
 
     def to_dict(self) -> dict:
         return {
@@ -95,7 +99,21 @@ class Track:
         return cls(
             id=d.get("id", str(uuid.uuid4())),
             name=d.get("name", ""),
-            created_at=d.get("created_at", datetime.now().isoformat(timespec="seconds")),
+            created_at=d.get(
+                "created_at", datetime.now().isoformat(timespec="seconds")
+            ),
             synced=bool(d.get("synced", False)),
             points=[TrackPoint.from_dict(p) for p in d.get("points", [])],
         )
+
+    # ---------- Утилиты ----------
+
+    def auto_name(self) -> str:
+        """Сгенерировать имя, если пользователь не задал своё."""
+        if self.name:
+            return self.name
+        try:
+            dt = datetime.fromisoformat(self.created_at)
+            return dt.strftime("Трек %d.%m.%Y %H:%M")
+        except (ValueError, TypeError):
+            return "Без названия"
